@@ -1,29 +1,74 @@
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
 const allExercise = await Astro.glob("../pages/exercises/*.md");
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Second Course Project</title>
-	</head>
-	<body>
-		<h1>Coding Practice</h1>
-		<ul>
-			{allExercise.map((exercise) => <li><a href={exercise.url}>{exercise.frontmatter.title}</a></li>)}
-		</ul>
+<BaseLayout pageTitle="Second Course Project">
+	<h2>Coding Practice</h2>
+    <h3>Unsolved (Showing at most three)</h3>
+	<ul id="unsolvedList">
+		{allExercise.map((exercise) => <li id={`exercise${exercise.frontmatter.id}`}><a href={exercise.url}>{exercise.frontmatter.title}</a></li>)}
+	</ul>
+    <h3>Pass</h3>
+    <ul id="passList"></ul>
+    <h3>Fail</h3>
+    <ul id="failList"></ul>
+    <h3>Error</h3>
+    <ul id="errorList"></ul>
+</BaseLayout>
 
-		<script>
-			if (window.localStorage.getItem('userid') === null) {
-				console.log('userid not set yet, generating');
-				const userid = crypto.randomUUID();
-				window.localStorage.setItem('userid', userid);
-			}
+<script client:load>
+    if (window.localStorage.getItem('userid') === null) {
+        console.log('userid not set yet, generating');
+        const userid = crypto.randomUUID();
+        window.localStorage.setItem('userid', userid);
+    }
 
-			console.log(`userid: ${window.localStorage.getItem('userid')}`);
-		</script>
-	</body>
-</html>
+    console.log(`userid: ${window.localStorage.getItem('userid')}`);
+
+    const getSubmissions = async () => {
+        const userid = window.localStorage.getItem('userid');
+        const result = await fetch(`/api/result?userid=${userid}`);
+        const resultJson = await result.json();
+        return resultJson;
+    }
+
+    const moveListItems = (submissionResult) => {
+        const passSubmissions = submissionResult.filter(submission => submission.result === 'PASS').map(submission => submission.exerciseid);
+        const failSubmissions = submissionResult.filter(submission => submission.result === 'FAIL').map(submission => submission.exerciseid);
+        const errorSubmissions = submissionResult.filter(submission => submission.result === 'ERROR').map(submission => submission.exerciseid);
+
+        console.log(passSubmissions);
+        console.log(failSubmissions);
+        console.log(errorSubmissions);
+
+        document.querySelector(`#passList`).innerHTML = '';
+        passSubmissions.forEach(id => {
+            const li = document.querySelector(`#exercise${id}`).outerHTML;
+            document.querySelector(`#exercise${id}`).outerHTML = '';
+            document.querySelector(`#passList`).innerHTML += li;
+        });
+
+        document.querySelector(`#failList`).innerHTML = '';
+        failSubmissions.forEach(id => {
+            const li = document.querySelector(`#exercise${id}`).outerHTML;
+            document.querySelector(`#exercise${id}`).outerHTML = '';
+            document.querySelector(`#failList`).innerHTML += li;
+        });
+
+        document.querySelector(`#errorList`).innerHTML = '';
+        errorSubmissions.forEach(id => {
+            const li = document.querySelector(`#exercise${id}`).outerHTML;
+            document.querySelector(`#exercise${id}`).outerHTML = '';
+            document.querySelector(`#errorList`).innerHTML += li;
+        });
+    }
+
+    const initPage = async () => {
+        const result = await getSubmissions();
+        console.log(result);
+        moveListItems(result);
+    }
+
+    initPage();
+</script>

@@ -7,14 +7,15 @@ const { frontmatter } = Astro.props;
     <slot />
     <input id="exerciseid" type="hidden" value={frontmatter.id}>
     <textarea id="solution" cols="50" rows="10"></textarea> <br>
-    <button id="submitButton">Submit</button>
+    <button id="submitButton">Submit</button>&nbsp;&nbsp;<span id="hint" style="display: none;">Grading...</span> <br><br><br>
+    <a href="/">Back to Home</a>
 </BaseLayout>
 
 <script client:load>
     let socket;
 
     const createWebSocketConnection = (userid, exerciseid) => {
-        socket = new WebSocket(`ws://localhost:7800/api/connect?userid=${userid}&exerciseid=${exerciseid}`);
+        socket = new WebSocket(`ws://${window.location.host}/api/connect?userid=${userid}&exerciseid=${exerciseid}`);
         
         socket.onopen = () => console.log("WebSocket connection created");
         socket.onmessage = handleMessage;
@@ -31,13 +32,26 @@ const { frontmatter } = Astro.props;
         console.log("Received message:");
         console.log(message);
         if (message.result !== undefined) {
+            toggleHint(false);
             alert(message.result);
+            socket.close();
+        }
+    }
+
+    const toggleHint = (isVisible) => {
+        var hintText = document.getElementById("hint");
+        if (isVisible) {
+            hintText.style.display = '';
+        } else {
+            hintText.style.display = 'none';
         }
     }
 
     document.querySelector('#submitButton').addEventListener('click', () => {
         const userid = window.localStorage.getItem('userid');
         const exerciseid = document.querySelector('#exerciseid').value
+
+        toggleHint(true);
 
         // create socket for receiving result
         createWebSocketConnection(userid, exerciseid);
