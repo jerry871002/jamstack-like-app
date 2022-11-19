@@ -23,4 +23,4 @@ COPY . .
 
 RUN deno cache deps.js
 
-CMD [ "run",  "--allow-net", "--allow-read", "--allow-write", "--allow-run", "app.js" ]
+CMD [ "run", "--allow-net", "--allow-read", "--allow-write", "--allow-run", "app.js" ]
