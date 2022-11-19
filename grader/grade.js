@@ -10,16 +10,19 @@ const createGradingContainer = async (code, randomKey) => {
   const graderContainerName = `submission-image-${randomKey}`;
   const tmpGraderContainerName = `${graderContainerName}-tmp`;
 
+  console.log(' [c] chmod +x ./build.sh');
   await run([
     "chmod",
     "+x",
-    "build.sh"
-  ])
-
-  await run ([
     "./build.sh"
   ])
 
+  console.log(' [c] ./build.sh');
+  await run([
+    "./build.sh"
+  ])
+
+  console.log(' [c] docker create --name tmpGraderContainerName grader-image');
   await run([
     "docker",
     "create",
