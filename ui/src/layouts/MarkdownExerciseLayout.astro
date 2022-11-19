@@ -1,0 +1,26 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout pageTitle={frontmatter.title}>
+    <slot />
+    <input id="exerciseid" type="hidden" value={frontmatter.id}>
+    <textarea id="solution" cols="50" rows="10"></textarea> <br>
+    <button id="submitButton">Submit</button>
+</BaseLayout>
+
+<script>
+    document.querySelector('#submitButton').addEventListener('click', () => {
+        const data = {
+            userid: window.localStorage.getItem('userid'),
+            exerciseid: document.querySelector('#exerciseid').value,
+            code: document.querySelector('#solution').value,
+        };
+        console.log(data);
+        fetch('/submit', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    });
+</script>

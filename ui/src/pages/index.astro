@@ -15,5 +15,15 @@ const allExercise = await Astro.glob("../pages/exercises/*.md");
 		<ul>
 			{allExercise.map((exercise) => <li><a href={exercise.url}>{exercise.frontmatter.title}</a></li>)}
 		</ul>
+
+		<script>
+			if (window.localStorage.getItem('userid') === null) {
+				console.log('userid not set yet, generating');
+				const userid = crypto.randomUUID();
+				window.localStorage.setItem('userid', userid);
+			}
+
+			console.log(`userid: ${window.localStorage.getItem('userid')}`);
+		</script>
 	</body>
 </html>
