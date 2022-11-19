@@ -1,5 +1,5 @@
 import { serve, connect } from "./deps.js";
-import { connectDB, insertSubmission, queryAllSubmissions } from "./db.js";
+import { connectDB, insertSubmission, queryAllSubmissions, querySubmissionsByUser } from "./db.js";
 
 const dbClient = await connectDB();
 let sockets = {};
@@ -93,6 +93,14 @@ const handleRequest = async (request) => {
     sockets[socketid].send(JSON.stringify(result));
 
     return httpResponse('received result', 201);
+  }
+
+  if (request.method === 'GET' && pathname === '/result') {
+    const userid = new URL(request.url).searchParams.get('userid');
+    const result = await querySubmissionsByUser(dbClient, userid);
+    return new Response(JSON.stringify(result), {
+      status: 200
+    });
   }
 
   if (pathname === "/connect") {

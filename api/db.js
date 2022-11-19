@@ -21,8 +21,17 @@ export const queryAllSubmissions = async (client) => {
 }
 
 export const insertSubmission = async (client, { userid, exerciseid, code, result }) => {
+  const userAllSubmissions = await querySubmissionsByUser(client, userid);
+
+  let sqlStatement = '';
+  if (userAllSubmissions.map(submission => submission.exerciseid).includes(exerciseid)) {
+    sqlStatement = "UPDATE submissions SET code=$code, result=$result WHERE userid=$userid AND exerciseid=$exerciseid;"
+  } else {
+    sqlStatement = "INSERT INTO submissions (userid, exerciseid, code, result) VALUES ($userid, $exerciseid, $code, $result);"
+  }
+
   await client.queryObject(
-    "INSERT INTO submissions (userid, exerciseid, code, result) VALUES ($userid, $exerciseid, $code, $result);",
+    sqlStatement,
     {
       userid: userid,
       exerciseid: exerciseid,
