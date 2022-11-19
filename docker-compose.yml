@@ -17,7 +17,7 @@ services:
     image: ui
     restart: "no"
     volumes:
-      - ./ui/:/app
+      - ./ui/src/:/app/src
     ports:
       - 7778:7778
     depends_on:
@@ -56,3 +56,18 @@ services:
     command: -connectRetries=60 -baselineOnMigrate=true migrate
     env_file:
       - project.env
+
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  grader:
+    build: grader
+    image: grader
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
