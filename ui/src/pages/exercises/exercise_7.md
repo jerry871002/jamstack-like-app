@@ -1,6 +1,7 @@
 ---
 layout: ../../layouts/MarkdownExerciseLayout.astro
 title: Team
+id: 7
 ---
 
 Create a class `Team` and implement the two following constructors (and necessary properties) to the class. The default constructor should have three properties:

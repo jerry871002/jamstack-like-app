@@ -1,6 +1,7 @@
 ---
 layout: ../../layouts/MarkdownExerciseLayout.astro
 title: Video and playlist
+id: 8
 ---
 
 Implement the classes `Video` and `Playlist` as follows. The class `Video` should have a name (`String`), a duration in seconds (`int`), a constructor with named arguments, and a `toString` method. The default name should be "Unknown" and the default length should be 0. The class should work as follows.

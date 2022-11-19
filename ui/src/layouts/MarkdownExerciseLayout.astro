@@ -10,15 +10,45 @@ const { frontmatter } = Astro.props;
     <button id="submitButton">Submit</button>
 </BaseLayout>
 
-<script>
+<script client:load>
+    let socket;
+
+    const createWebSocketConnection = (userid, exerciseid) => {
+        socket = new WebSocket(`ws://localhost:7800/api/connect?userid=${userid}&exerciseid=${exerciseid}`);
+        
+        socket.onopen = () => console.log("WebSocket connection created");
+        socket.onmessage = handleMessage;
+        socket.onclose = (code, reason) => {
+            console.log("WebSocket connection closed");
+            console.log(code);
+            console.log(reason);
+        };
+        socket.onerror = (e) => console.error("WebSocket error:", e);
+    }
+
+    const handleMessage = (messageEvent) => {
+        const message = JSON.parse(messageEvent.data);
+        console.log("Received message:");
+        console.log(message);
+        if (message.result !== undefined) {
+            alert(message.result);
+        }
+    }
+
     document.querySelector('#submitButton').addEventListener('click', () => {
+        const userid = window.localStorage.getItem('userid');
+        const exerciseid = document.querySelector('#exerciseid').value
+
+        // create socket for receiving result
+        createWebSocketConnection(userid, exerciseid);
+
         const data = {
-            userid: window.localStorage.getItem('userid'),
-            exerciseid: document.querySelector('#exerciseid').value,
+            userid: userid,
+            exerciseid: exerciseid,
             code: document.querySelector('#solution').value,
         };
         console.log(data);
-        fetch('/submit', {
+        fetch('/api/submit', {
             method: 'POST',
             body: JSON.stringify(data)
         });
