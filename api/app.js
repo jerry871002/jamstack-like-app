@@ -1,13 +1,24 @@
-import { serve } from "./deps.js";
-import { grade } from "./grade.js";
+import { Application, Router, Status, Client } from "./deps.js";
 
-const handleRequest = async (request) => {
-  const formData = await request.formData();
-  const code = formData.get("code");
+const index = async ({ request, response }) => {
+  // const formData = await request.formData();
+  // const code = formData.get("code");
 
-  const result = await grade(code);
+  // const result = await grade(code);
 
-  return new Response(JSON.stringify({ result: result }));
+  console.log(request);
+  response.body = {};
 };
 
-serve(handleRequest, { port: 7777 });
+const submitExercise = async ({ request, response }) => {
+  console.log(request);
+  response.body = { 'message': 'submitting exercise' };
+}
+
+const router = new Router();
+router.get("/", index);
+router.post("/submit", submitExercise);
+
+const app = new Application();
+app.use(router.routes());
+app.listen({ port: 7777 });

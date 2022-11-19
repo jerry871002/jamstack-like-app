@@ -1,6 +1,6 @@
-FROM denoland/deno:alpine-1.26.2
+FROM lukechannings/deno:v1.26.2
 
-RUN apk add --update docker openrc
+# RUN apk add --update docker openrc
 
 EXPOSE 7777
 
