@@ -12,7 +12,7 @@ Before running the application, please install the following tools.
 
 Open a terminal at the root folder of this project, then use `docker-compose up --build` to start the application. For the first start, it might take up to three minutes for the application to start fully. Make sure you see the `flyway` service exit successfully before beginning to use the application.
 
-There might be some errors popping out in the `grader` service while starting, this is because it tries to connect to `rabbitmq` before it is ready. The `grader` service will automatically restart until the connection is made, so just wait for a couple of minutes, it's not breaking.
+There might be some errors popping out while starting, this might due to the `grader` service tries to connect to `rabbitmq` or the `api` service tries to connect to the database before they are ready. The `grader` and/or `api` services will automatically restart until the connections are made, so just wait for a couple of minutes, the system is not breaking.
 
 After everything is ready, visit [http://127.0.0.1:7800](http://127.0.0.1:7777) to start using the application.
 

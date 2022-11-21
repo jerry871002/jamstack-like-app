@@ -5,7 +5,7 @@ WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
 COPY package.json /app/package.json
-COPY package-lock.json /app/package-lock.json
+# COPY package-lock.json /app/package-lock.json
 COPY tsconfig.json /app/tsconfig.json
 
 # install node dependencies
