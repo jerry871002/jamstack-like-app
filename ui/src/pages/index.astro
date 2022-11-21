@@ -68,6 +68,11 @@ const allExercise = await Astro.glob("../pages/exercises/*.md");
         const result = await getSubmissions();
         console.log(result);
         moveListItems(result);
+        document.querySelectorAll(`#unsolvedList>li`).forEach((element, index, arr) => {
+            if (index >= 3) {
+                element.style.display = 'none';
+            }
+        });
     }
 
     initPage();

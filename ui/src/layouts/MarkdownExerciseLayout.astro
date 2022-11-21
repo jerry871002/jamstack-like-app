@@ -50,7 +50,19 @@ const { frontmatter } = Astro.props;
     document.querySelector('#submitButton').addEventListener('click', () => {
         const userid = window.localStorage.getItem('userid');
         const exerciseid = document.querySelector('#exerciseid').value
+        const codeSolution = document.querySelector('#solution').value;
 
+        // check if the user submit the same solution again
+        if (window.localStorage.getItem(`exercise${exerciseid}`) !== null &&
+            window.localStorage.getItem(`exercise${exerciseid}`) === codeSolution) {
+            alert('You already submitted this solution!');
+            return;
+        }
+
+        // store current solution for futur checking
+        window.localStorage.setItem(`exercise${exerciseid}`, codeSolution);
+
+        // show the "grading" text while waiting for the result
         toggleHint(true);
 
         // create socket for receiving result
@@ -59,7 +71,7 @@ const { frontmatter } = Astro.props;
         const data = {
             userid: userid,
             exerciseid: exerciseid,
-            code: document.querySelector('#solution').value,
+            code: codeSolution,
         };
         console.log(data);
         fetch('/api/submit', {
