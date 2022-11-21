@@ -10,6 +10,10 @@ services:
     depends_on:
       - ui
       - api
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
     command: [nginx-debug, '-g', 'daemon off;']
 
   ui:
@@ -28,7 +32,6 @@ services:
   api:
     build: api
     image: api
-    restart: "no"
     volumes:
       - ./api/:/app
       - /var/run/docker.sock:/var/run/docker.sock
@@ -37,6 +40,10 @@ services:
     depends_on:
       - database
       - flyway
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
     env_file:
       - project.env
 
@@ -66,8 +73,11 @@ services:
   grader:
     build: grader
     image: grader
-    restart: on-failure
     depends_on:
       - rabbitmq
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
