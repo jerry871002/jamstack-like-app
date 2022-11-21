@@ -67,20 +67,22 @@ const handleRequest = async (request) => {
   console.log(`method: ${request.method}, pathname: ${pathname}`);
 
   if (request.method === 'GET' && pathname === '/') {
-    return new Response(JSON.stringify({
-      'message': 'api server index'
-    }), {
-      status: 200
-    });
+    return httpResponse('api server index', 200);
   }
 
   if (request.method === "POST" && pathname === "/submit") {
     const submission = await request.json();
+
+    if (!('userid' in submission && 'exerciseid' in submission)) {
+      return httpResponse('missing userid or exerciseid', 400);
+    }
+
     console.log(submission);
     await submitExercise(submission);
     return httpResponse('received submission', 201);
   }
 
+  // for grader informing the result of grading
   if (request.method === 'POST' && pathname === '/result') {
     const result = await request.json();
     console.log(result);
@@ -90,11 +92,15 @@ const handleRequest = async (request) => {
     console.log(dbStatus);
 
     const socketid = `${result.userid}${result.exerciseid}`;
-    sockets[socketid].send(JSON.stringify(result));
+    // while doing performance test, socket is not defined
+    if (sockets[socketid] !== undefined) {
+      sockets[socketid].send(JSON.stringify(result));
+    }
 
     return httpResponse('received result', 201);
   }
 
+  // for ui querying the grading results
   if (request.method === 'GET' && pathname === '/result') {
     const userid = new URL(request.url).searchParams.get('userid');
     const result = await querySubmissionsByUser(dbClient, userid);
