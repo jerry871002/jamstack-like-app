@@ -25,7 +25,7 @@ const connectRabbitMQ = async () => {
       const response = await fetch('http://web:7800/api/result', {
         method: 'POST',
         body: JSON.stringify({
-          ...submission,
+          ...submission,  // userid and exerciseid
           result: result
         })
       });
