@@ -1,4 +1,4 @@
-# Jamstack-like App
+# CS-E4770 Project 2: Jamstack-like Web Application
 
 This is the second project of CS-E4770 Designing and Building Scalable Web Applications at Aalto University. This project implements a Jamstack-like web application using [Astro](https://astro.build/) and measures its performance.
 
